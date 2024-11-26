@@ -1,0 +1,28 @@
+name: Workflow 1
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t api-testing-js-app .
+
+      - name: Run Docker container
+        run: |
+          docker run -d -p 3000:3000 api-testing-js-app
+
+      - name: Run Tests
+        run: |
+          docker exec $(docker ps -q) npm test
